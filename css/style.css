@@ -378,6 +378,7 @@
 }
 
 .d-f2 a {
+  color: #00b207;
   text-decoration: none;
 }
 
@@ -658,4 +659,133 @@
   padding: 4px 10px;
   border-radius: 4px;
   font-size: 12px;
+}
+
+.Best-Deals {
+  width: 100%;
+  padding: 60px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.best-container {
+  width: 83%;
+  display: flex;
+  gap: 20px;
+}
+
+.deal-card {
+  flex: 1;
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  height: 440px;
+}
+
+.deal-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 35px;
+  color: white;
+  text-align: center;
+}
+
+.card-overlay h2 {
+  font-size: 30px;
+  margin: 10px 0 20px 0;
+}
+
+.timer-container {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 25px;
+}
+
+.separator {
+  font-size: 24px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+}
+
+.timer-container {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 25px;
+}
+
+.time-box {
+  font-size: 22px;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.time-box span {
+  font-size: 10px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 5px;
+}
+
+.price-tag {
+  font-size: 16px;
+  margin-bottom: 25px;
+}
+.price-tag .price {
+  color: #ff8a00;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.promo-tag {
+  margin-bottom: 25px;
+  font-size: 16px;
+}
+.discount-badge {
+  background: #1a1a1a;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.shop-btn {
+  background: white;
+  color: #00b207;
+  padding: 12px 28px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: 0.3s;
+}
+
+.shop-btn:hover {
+  background: #00b207;
+  color: white;
+}
+
+.dark-text {
+  color: #1a1a1a;
+}
+.dark-text .time-box span {
+  color: #666;
 }
