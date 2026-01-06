@@ -1128,6 +1128,10 @@ width: 100%;
     font-weight: 600;
     margin: 15px 0;
 }
+.caver-img-w span {
+
+  color: white;
+}
 
 .shop-3 {
   background: white;
