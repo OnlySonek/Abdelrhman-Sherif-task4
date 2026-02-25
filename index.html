@@ -1,1084 +1,1157 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>task-4</title>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="./css/style.css" />
-  </head>
-  <body>
-    <header>
-      <nav class="navbar">
-        <div class="spacer">
-          <div class="nav-links">
-            <ul class="menu-list">
-              <li class="link-white"><a href="">Home</a></li>
-              <li><a href="#">Shop</a></li>
-              <li><a href="#">Pages</a></li>
-              <li><a href="#">Blog</a></li>
-              <li><a href="#">About Us</a></li>
-              <li><a href="#">Contact Us</a></li>
-            </ul>
+<html lang="en" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ecobazar - Organic Food Store</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'brand-green': '#00b207',
+            'brand-green-dark': '#008f06',
+            'brand-red': '#ea4b48',
+            'brand-orange': '#ff8a00',
+            'brand-dark': '#1a1a1a',
+            'brand-blue': '#2388ff',
+          },
+          fontFamily: {
+            'poppins': ['Poppins', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+    }
+
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #00b207;
+      border-radius: 5px;
+    }
+
+    .dark ::-webkit-scrollbar-track {
+      background: #1a1a1a;
+    }
+
+    .dark ::-webkit-scrollbar-thumb {
+      background: #00b207;
+    }
+
+    .flying-card {
+      opacity: 0;
+      transform: translateY(-100px) rotateX(15deg);
+    }
+
+    .nav-scrolled {
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .dark .nav-scrolled {
+      background: rgba(26, 26, 26, 0.98);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .product-card {
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .product-card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 20px 40px rgba(0, 178, 7, 0.2);
+    }
+
+    .dark .product-card:hover {
+      box-shadow: 0 20px 40px rgba(0, 178, 7, 0.3);
+    }
+
+    .magnetic-btn {
+      transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+
+    .float-animation {
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .hero-gradient {
+      background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    }
+
+    .dark .hero-gradient {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    }
+
+    #toast.show {
+      transform: translateX(0);
+    }
+
+    #mobile-menu.active {
+      transform: translateX(0);
+    }
+
+    #cart-sidebar.active {
+      transform: translateX(0);
+    }
+  </style>
+</head>
+
+<body class="font-poppins antialiased bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+
+  <!-- Loading Screen -->
+  <div id="loading-screen" class="fixed inset-0 bg-white dark:bg-gray-900 z-[100] flex items-center justify-center">
+    <div class="text-center">
+      <div class="w-16 h-16 border-4 border-brand-green border-t-transparent rounded-full animate-spin mx-auto mb-4">
+      </div>
+      <p class="text-brand-green font-semibold text-lg">Loading Ecobazar...</p>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast"
+    class="fixed top-4 right-4 bg-brand-green text-white px-6 py-4 rounded-xl shadow-2xl z-[9999] flex items-center gap-3 transform translate-x-[400px] transition-transform duration-300">
+    <i class="fa-solid fa-check-circle text-2xl"></i>
+    <div>
+      <p class="font-bold" id="toast-title">Success!</p>
+      <p class="text-sm" id="toast-message">Item added to cart</p>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header id="header"
+    class="fixed w-full top-0 z-50 transition-all duration-300 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md">
+    <nav class="w-full px-4 py-4">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <a href="#home" class="flex items-center gap-3 group">
+          <div
+            class="w-12 h-12 bg-brand-green rounded-xl flex items-center justify-center transform group-hover:rotate-12 transition-transform shadow-lg">
+            <i class="fa-solid fa-leaf text-white text-2xl"></i>
+          </div>
+          <span class="text-2xl font-bold text-gray-800 dark:text-white">Ecobazar</span>
+        </a>
+
+        <ul class="hidden lg:flex items-center gap-8">
+          <li><a href="#home"
+              class="text-gray-700 dark:text-gray-200 font-semibold hover:text-brand-green transition">Home</a></li>
+          <li><a href="#shop"
+              class="text-gray-700 dark:text-gray-200 font-semibold hover:text-brand-green transition">Shop</a></li>
+          <li><a href="#categories"
+              class="text-gray-700 dark:text-gray-200 font-semibold hover:text-brand-green transition">Categories</a>
+          </li>
+          <li><a href="#deals"
+              class="text-gray-700 dark:text-gray-200 font-semibold hover:text-brand-green transition">Deals</a></li>
+          <li><a href="#blog"
+              class="text-gray-700 dark:text-gray-200 font-semibold hover:text-brand-green transition">Blog</a></li>
+        </ul>
+
+        <div class="flex items-center gap-4">
+          <button id="dark-mode-toggle"
+            class="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-indigo-600 flex items-center justify-center text-white hover:scale-110 transition magnetic-btn shadow-lg">
+            <i class="fa-solid fa-moon dark:hidden"></i>
+            <i class="fa-solid fa-sun hidden dark:block"></i>
+          </button>
+
+          <div class="hidden md:flex items-center gap-2 text-gray-700 dark:text-gray-200">
+            <i class="fa-solid fa-phone text-brand-green"></i>
+            <span class="font-bold text-sm">(219) 555-0114</span>
           </div>
 
-          <div class="nav-phone">
-            <i class="fa-solid fa-phone"></i>
-            <h2>(219) 555-0114</h2>
-          </div>
+          <button id="cart-btn"
+            class="relative w-12 h-12 bg-brand-green/10 dark:bg-brand-green/20 rounded-full flex items-center justify-center hover:bg-brand-green transition group magnetic-btn">
+            <i class="fa-solid fa-bag-shopping text-brand-green group-hover:text-white text-xl transition"></i>
+            <span id="cart-count"
+              class="absolute -top-1 -right-1 bg-brand-red text-white text-xs w-6 h-6 flex items-center justify-center rounded-full font-bold scale-0 transition-transform">0</span>
+          </button>
+
+          <button id="mobile-menu-btn" class="lg:hidden w-10 h-10 text-gray-700 dark:text-gray-200">
+            <i class="fa-solid fa-bars text-2xl"></i>
+          </button>
         </div>
-      </nav>
-    </header>
+      </div>
+    </nav>
+  </header>
 
-    <section class="hero-section">
-      <div class="hero-container">
-        <div class="main-banner">
-          <img src="./imges/img-1.jpg" alt="" class="banner-img" />
-          <div class="black-overlay"></div>
-          <div class="banner-text">
-            <h2>Fresh & Healthy Organic Food</h2>
+  <!-- Mobile Menu -->
+  <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] hidden"></div>
+  <div id="mobile-menu"
+    class="fixed top-0 left-0 w-[320px] h-full bg-white dark:bg-gray-800 z-[91] shadow-2xl transform -translate-x-full transition-transform duration-300">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-brand-green rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-leaf text-white text-xl"></i>
           </div>
-          <div class="offer-container">
-            <hr class="green-line" />
-            <div class="offer-details">
-              <h3>Sale up to <span class="badge">30% OFF</span></h3>
-              <p>Free shipping on all your order.</p>
-              <a href="#" class="shop-now"
-                >Shop now <span><i class="fa-solid fa-arrow-right"></i></span
-              ></a>
-            </div>
+          <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Ecobazar</h2>
+        </div>
+        <button id="close-mobile-menu"
+          class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-brand-red transition">
+          <i class="fa-solid fa-xmark text-2xl"></i>
+        </button>
+      </div>
+      <ul class="space-y-2">
+        <li><a href="#home"
+            class="block py-4 px-4 rounded-xl hover:bg-brand-green/10 text-gray-800 dark:text-gray-200 font-semibold transition flex items-center gap-3"><i
+              class="fa-solid fa-house text-brand-green"></i>Home</a></li>
+        <li><a href="#shop"
+            class="block py-4 px-4 rounded-xl hover:bg-brand-green/10 text-gray-800 dark:text-gray-200 font-semibold transition flex items-center gap-3"><i
+              class="fa-solid fa-store text-brand-green"></i>Shop</a></li>
+        <li><a href="#categories"
+            class="block py-4 px-4 rounded-xl hover:bg-brand-green/10 text-gray-800 dark:text-gray-200 font-semibold transition flex items-center gap-3"><i
+              class="fa-solid fa-layer-group text-brand-green"></i>Categories</a></li>
+        <li><a href="#deals"
+            class="block py-4 px-4 rounded-xl hover:bg-brand-green/10 text-gray-800 dark:text-gray-200 font-semibold transition flex items-center gap-3"><i
+              class="fa-solid fa-tag text-brand-green"></i>Deals</a></li>
+        <li><a href="#blog"
+            class="block py-4 px-4 rounded-xl hover:bg-brand-green/10 text-gray-800 dark:text-gray-200 font-semibold transition flex items-center gap-3"><i
+              class="fa-solid fa-newspaper text-brand-green"></i>Blog</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Cart Sidebar -->
+  <div id="cart-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[91] hidden"></div>
+  <div id="cart-sidebar"
+    class="fixed top-0 right-0 w-[400px] max-w-full h-full bg-white dark:bg-gray-800 z-[92] shadow-2xl transform translate-x-full transition-transform duration-300">
+    <div class="p-6 h-full flex flex-col">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-800 dark:text-white">Shopping Cart</h2>
+        <button id="close-cart"
+          class="w-10 h-10 flex items-center justify-center text-gray-500 hover:text-brand-red transition">
+          <i class="fa-solid fa-xmark text-2xl"></i>
+        </button>
+      </div>
+      <div id="cart-items" class="flex-1 overflow-y-auto space-y-4">
+        <div id="empty-cart" class="text-center py-10">
+          <div
+            class="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fa-solid fa-basket-shopping text-4xl text-gray-400"></i>
           </div>
+          <p class="text-gray-500 dark:text-gray-400 text-lg">Your cart is empty</p>
+          <a href="#shop" class="inline-block mt-4 text-brand-green font-semibold hover:underline">Start Shopping</a>
+        </div>
+      </div>
+      <div class="pt-6 border-t border-gray-200 dark:border-gray-700 mt-4 space-y-4">
+        <div class="flex items-center justify-between">
+          <span class="font-semibold text-lg dark:text-white">Total:</span>
+          <span id="cart-total" class="text-3xl font-bold text-brand-green">$0.00</span>
+        </div>
+        <button
+          class="w-full bg-brand-green text-white py-4 rounded-xl font-bold hover:bg-brand-green-dark transition magnetic-btn shadow-lg">
+          Checkout <i class="fa-solid fa-arrow-right ml-2"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section id="home" class="hero-gradient min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+    <div class="absolute inset-0 overflow-hidden">
+      <div class="absolute top-20 left-10 w-72 h-72 bg-brand-green/20 rounded-full blur-3xl animate-pulse"></div>
+      <div class="absolute bottom-20 right-10 w-96 h-96 bg-brand-orange/10 rounded-full blur-3xl animate-pulse"
+        style="animation-delay: 1s;"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 py-20 grid lg:grid-cols-2 gap-12 items-center">
+      <div class="text-center lg:text-left space-y-8">
+        <div
+          class="inline-flex items-center gap-2 bg-white/10 backdrop-blur px-6 py-3 rounded-full text-white text-sm font-semibold border border-white/20">
+          <span class="w-2 h-2 bg-brand-green rounded-full animate-pulse"></span>
+          100% Organic & Fresh
+        </div>
+        <h1 class="text-5xl lg:text-7xl font-bold text-white leading-tight">
+          Fresh & Healthy <br />
+          <span class="text-brand-green">Organic Food</span>
+        </h1>
+        <p class="text-xl text-white/80 max-w-lg mx-auto lg:mx-0">
+          Get up to <span class="text-brand-orange font-bold text-2xl">30% OFF</span> on your first order. Free shipping
+          on all orders!
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+          <a href="#shop"
+            class="inline-flex items-center justify-center gap-3 bg-brand-green text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-brand-green-dark transition shadow-2xl hover:shadow-brand-green/50 group magnetic-btn">
+            Shop Now <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+          </a>
+          <a href="#deals"
+            class="inline-flex items-center justify-center gap-3 bg-white/10 backdrop-blur text-white border-2 border-white/30 px-8 py-4 rounded-full font-bold text-lg hover:bg-white/20 transition magnetic-btn">
+            View Deals
+          </a>
         </div>
 
-        <div class="side-images">
-          <div class="img-top">
-            <img src="./imges/img2.jpg" alt="" />
-            <div class="absolute text-box">
-              <p class="summer-sale">SUMMER SALE</p>
-              <h3 class="discount">75% OFF</h3>
-              <p class="description">Only Fruit & Vegetable</p>
-              <a href="#" class="shop-link"
-                >Shop Now <i class="fa-solid fa-arrow-right"></i
-              ></a>
-            </div>
+        <div class="flex items-center gap-8 justify-center lg:justify-start pt-4">
+          <div class="text-center">
+            <p class="text-3xl font-bold text-white">15k+</p>
+            <p class="text-white/60 text-sm">Happy Customers</p>
           </div>
-          <div class="img-bottom">
-            <img src="./imges/img-3.jpg" alt="" />
-            <div class="back-black">
-              <div class="absolute deal-box">
-                <p class="best-deal">BEST DEAL</p>
-                <h3 class="deal-title">
-                  Special Products <br />
-                  Deal of the Month
-                </h3>
-                <a href="#" class="shop-link"
-                  >Shop Now <i class="fa-solid fa-arrow-right"></i
-                ></a>
-              </div>
-            </div>
+          <div class="w-px h-12 bg-white/20"></div>
+          <div class="text-center">
+            <p class="text-3xl font-bold text-white">200+</p>
+            <p class="text-white/60 text-sm">Products</p>
+          </div>
+          <div class="w-px h-12 bg-white/20"></div>
+          <div class="text-center">
+            <p class="text-3xl font-bold text-white">4.9</p>
+            <p class="text-white/60 text-sm">Rating</p>
           </div>
         </div>
       </div>
-    </section>
 
-    <section class="min-section">
-      <div class="container-w80">
-        <div class="min-container">
-          <div class="min-icon-1"><i class="fa-solid fa-truck-fast"></i></div>
-          <div class="min-text-1">
-            <h5>Free Shipping</h5>
-            <p>Free shipping on all your order</p>
+      <div class="relative hidden lg:block">
+        <img src="./imges/img-1.jpg" alt="Fresh Food"
+          class="rounded-3xl shadow-2xl w-full object-cover h-[600px] float-animation"
+          onerror="this.src='./imges/img-1.jpg'" />
+
+        <div class="absolute -bottom-6 -left-6 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-2xl float-animation">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 bg-brand-green/20 rounded-full flex items-center justify-center">
+              <i class="fa-solid fa-leaf text-brand-green text-3xl"></i>
+            </div>
+            <div>
+              <p class="text-2xl font-bold text-gray-800 dark:text-white">100%</p>
+              <p class="text-gray-600 dark:text-gray-400 text-sm">Organic Products</p>
+            </div>
           </div>
         </div>
-        <div class="min-container">
-          <div class="min-icon-1"><i class="fa-solid fa-headset"></i></div>
-          <div class="min-text-1">
-            <h5>Customer Support 24/7</h5>
-            <p>Instant access to Support</p>
-          </div>
-        </div>
-        <div class="min-container">
-          <div class="min-icon-1"><i class="fa-solid fa-bag-shopping"></i></div>
-          <div class="min-text-1">
-            <h5>100% Secure Payment</h5>
-            <p>We ensure your money is save</p>
-          </div>
-        </div>
-        <div class="min-container">
-          <div class="min-icon-1"><i class="fa-solid fa-box"></i></div>
-          <div class="min-text-1">
-            <h5>Money-Back Guarantee</h5>
-            <p>30 Days Money-Back Guarantee</p>
-          </div>
+
+        <div class="absolute -top-6 -right-6 bg-brand-orange text-white p-6 rounded-2xl shadow-2xl float-animation"
+          style="animation-delay: 1s;">
+          <p class="text-3xl font-bold">30%</p>
+          <p class="text-sm opacity-90">OFF</p>
         </div>
       </div>
-    </section>
+    </div>
 
-    <section class="bar-section">
-      <div class="bar">
-        <div class="nav-1 d-f1"><h3>Popular Categories</h3></div>
-        <div class="nav-1 d-f2">
-          <a href="">View All <i class="fa-solid fa-arrow-right"></i></a>
+    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <div class="w-8 h-12 border-2 border-white/30 rounded-full flex justify-center p-2">
+        <div class="w-1.5 h-3 bg-white rounded-full animate-pulse"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="py-20 bg-white dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div
+          class="feature-card group p-8 bg-gradient-to-br from-green-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-3xl border border-green-100 dark:border-gray-700 hover:shadow-2xl transition-all duration-500 cursor-pointer flying-card">
+          <div
+            class="w-16 h-16 bg-brand-green/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition">
+            <i class="fa-solid fa-truck-fast text-brand-green text-3xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Free Shipping</h3>
+          <p class="text-gray-600 dark:text-gray-400">Free shipping on all orders over $50</p>
+        </div>
+
+        <div
+          class="feature-card group p-8 bg-gradient-to-br from-blue-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-3xl border border-blue-100 dark:border-gray-700 hover:shadow-2xl transition-all duration-500 cursor-pointer flying-card">
+          <div
+            class="w-16 h-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition">
+            <i class="fa-solid fa-headset text-brand-blue text-3xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">24/7 Support</h3>
+          <p class="text-gray-600 dark:text-gray-400">Instant access to customer support</p>
+        </div>
+
+        <div
+          class="feature-card group p-8 bg-gradient-to-br from-orange-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-3xl border border-orange-100 dark:border-gray-700 hover:shadow-2xl transition-all duration-500 cursor-pointer flying-card">
+          <div
+            class="w-16 h-16 bg-brand-orange/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition">
+            <i class="fa-solid fa-shield-halved text-brand-orange text-3xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Secure Payment</h3>
+          <p class="text-gray-600 dark:text-gray-400">100% secure payment methods</p>
+        </div>
+
+        <div
+          class="feature-card group p-8 bg-gradient-to-br from-red-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-3xl border border-red-100 dark:border-gray-700 hover:shadow-2xl transition-all duration-500 cursor-pointer flying-card">
+          <div
+            class="w-16 h-16 bg-brand-red/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition">
+            <i class="fa-solid fa-rotate-left text-brand-red text-3xl"></i>
+          </div>
+          <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-2">Money Back</h3>
+          <p class="text-gray-600 dark:text-gray-400">30 days money-back guarantee</p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="Popular-Section-Wrapper">
-      <div class="Popular">
-        <div class="w-85">
-          <div class="Popular-1">
-            <img src="./imges/1.png" alt="" />
-            <p>Fresh Fruit</p>
-          </div>
-          <div class="Popular-2 active">
-            <img src="./imges/2.png" alt="" />
-            <p>Fresh Vegetables</p>
-          </div>
-          <div class="Popular-3">
-            <img src="./imges/3.png" alt="" />
-            <p>Meat & Fish</p>
-          </div>
-          <div class="Popular-4">
-            <img src="./imges/4.png" alt="" />
-            <p>Snacks</p>
-          </div>
-          <div class="Popular-5">
-            <img src="./imges/5.png" alt="" />
-            <p>Beverages</p>
-          </div>
-          <div class="Popular-6">
-            <img src="./imges/6.png" alt="" />
-            <p>Beauty & Health</p>
-          </div>
-
-          <div class="Popular-7">
-            <img src="./imges/7.png" alt="" />
-            <p>Bread & Bakery</p>
-          </div>
-          <div class="Popular-8">
-            <img src="./imges/8.png" alt="" />
-            <p>Baking Needs</p>
-          </div>
-          <div class="Popular-9">
-            <img src="./imges/9.png" alt="" />
-            <p>Cooking</p>
-          </div>
-          <div class="Popular-10">
-            <img src="./imges/10.png" alt="" />
-            <p>Diabetic Food</p>
-          </div>
-          <div class="Popular-11">
-            <img src="./imges/11-.png" alt="" />
-            <p>Dish Detergents</p>
-          </div>
-          <div class="Popular-12">
-            <img src="./imges/11.png" alt="" />
-            <p>Oil</p>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="bar-section">
-      <div class="bar">
-        <div class="nav-1 d-f1"><h3>Popular Products</h3></div>
-        <div class="nav-1 d-f2">
-          <a href="">View All <i class="fa-solid fa-arrow-right"></i></a>
-        </div>
-      </div>
-    </section>
-    <section class="Popular-Products-Wrapper">
-      <div class="Products-Grid-Container">
-        <div class="Product-Card-1">
-          <div class="sale-tag">Sale 50%</div>
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image.png" alt="" />
-          <div class="card-footer">
-            <div class="info">
-              <p class="name">Green Apple</p>
-              <p class="price">$14.99 <span>$20.99</span></p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="Product-Card-2">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (1).png" alt="" />
-          <div class="card-footer">
-            <div class="info">
-              <p class="name">Fresh Indian Malta</p>
-              <p class="price">$20.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="Product-Card-3">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (2).png" alt="" />
-          <div class="card-footer">
-            <div class="info">
-              <p class="name">Chinese cabbage</p>
-              <p class="price">$12.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="Product-Card-4">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (3).png" alt="" />
-          <div class="card-footer">
-            <div class="info">
-              <p class="name">Green Lettuce</p>
-              <p class="price">$9.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="Product-Card-5">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (4).png" alt="" />
-          <div class="card-footer">
-            <div class="info">
-              <p class="name">Eggplant</p>
-              <p class="price">$34.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="Product-Card-6">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (5).png" alt="" />
-          <div class="card-footer">
-            <div class="info">
-              <p class="name">Big Potatoes</p>
-              <p class="price">$20.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="Product-Card-7">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (6).png" alt="" />
-          <div class="card-footer">
-            <div class="info">
-              <p class="name">Corn</p>
-              <p class="price">$20.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="Product-Card-8">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (7).png" alt="" />
-          <div class="card-footer">
-            <div class="info">
-              <p class="name">Fresh Cauliflower</p>
-              <p class="price">$12.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="Product-Card-9">
-          <div class="sale-tag">Sale 50%</div>
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (8).png" alt="" />
-          <div class="card-footer">
-            <div class="info">
-              <p class="name">Green Capsicum</p>
-              <p class="price">$9.00 <span>$20.99</span></p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="Product-Card-10">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (9).png" alt="" />
-          <div class="card-footer">
-            <div class="info">
-              <p class="name">Green Chili</p>
-              <p class="price">$34.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="Best-Deals">
-      <div class="best-container">
-        <div class="deal-card">
-          <img src="imges/Rectangle 54.png" alt="Sale" />
-          <div class="card-overlay">
-            <p class="tag">BEST DEALS</p>
-            <h2>Sale of the Month</h2>
-
-            <div class="timer-container">
-              <div class="time-box">00 <span>DAYS</span></div>
-              <span class="separator">:</span>
-              <div class="time-box">02 <span>HOURS</span></div>
-              <span class="separator">:</span>
-              <div class="time-box">18 <span>MINS</span></div>
-              <span class="separator">:</span>
-              <div class="time-box">46 <span>SECS</span></div>
-            </div>
-
-            <a href="#" class="shop-btn"
-              >Shop Now <i class="fa-solid fa-arrow-right"></i
-            ></a>
-          </div>
-        </div>
-
-        <div class="deal-card">
-          <img src="imges/Rectangle 54 (1).png" alt="Meat" />
-          <div class="card-overlay">
-            <p class="tag">85% FAT FREE</p>
-            <h2>Low-Fat Meat</h2>
-            <p class="price-tag">
-              Started at <span class="price">$79.99</span>
-            </p>
-            <a href="#" class="shop-btn"
-              >Shop Now <i class="fa-solid fa-arrow-right"></i
-            ></a>
-          </div>
-        </div>
-
-        <div class="deal-card">
-          <img src="imges/Rectangle 54 (2).png" alt="Fruit" />
-          <div class="card-overlay dark-text">
-            <p class="tag">SUMMER SALE</p>
-            <h2>100% Fresh Fruit</h2>
-            <p class="promo-tag">
-              Up to <span class="discount-badge">64% OFF</span>
-            </p>
-            <a href="#" class="shop-btn"
-              >Shop Now <i class="fa-solid fa-arrow-right"></i
-            ></a>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="bar-section">
-      <div class="bar">
-        <div class="nav-1 d-f1"><h3>Hot Deals</h3></div>
-        <div class="nav-1 d-f2">
-          <a href="">View All <i class="fa-solid fa-arrow-right"></i></a>
-        </div>
-      </div>
-    </section>
-    <section class="hot-deals-section">
-      <div class="hot-deals-grid">
-        <div class="product-featured">
-          <div class="badges">
-            <span class="badge sale">Sale 50%</span>
-            <span class="badge best">Best Sale</span>
-          </div>
-          <img
-            src="./imges/Image.png"
-            alt="Featured Product"
-            class="featured-img"
-          />
-          <div class="action-bar">
-            <button class="icon-btn">
-              <i class="fa-regular fa-heart"></i>
-            </button>
-            <button class="main-add-btn">
-              Add to Cart <i class="fa-solid fa-bag-shopping"></i>
-            </button>
-            <button class="icon-btn"><i class="fa-regular fa-eye"></i></button>
-          </div>
-          <div class="featured-info">
-            <p class="name">Chinese cabbage</p>
-            <p class="price">$12.00 <span>$24.00</span></p>
-            <div class="rating-row">
-              <div class="stars">★★★★★</div>
-              <span class="feedback">(524 Feedback)</span>
-            </div>
-            <div class="promo-timer">
-              <p class="timer-label">Hurry up! Offer ends in:</p>
-              <div class="timer-display">
-                <div class="t-block">01 <span>DAYS</span></div>
-                :
-                <div class="t-block">23 <span>HOURS</span></div>
-                :
-                <div class="t-block">34 <span>MINS</span></div>
-                :
-                <div class="t-block">57 <span>SECS</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="product-small">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (1).png" alt="Product" />
-          <div class="small-info">
-            <div class="text">
-              <p class="name">Chinese cabbage</p>
-              <p class="price">$12.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="product-small">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (2).png" alt="Product" />
-          <div class="small-info">
-            <div class="text">
-              <p class="name">Indian Malta</p>
-              <p class="price">$20.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="product-small">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (3).png" alt="Product" />
-          <div class="small-info">
-            <div class="text">
-              <p class="name">Eggplant</p>
-              <p class="price">$12.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="product-small">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (4).png" alt="Product" />
-          <div class="small-info">
-            <div class="text">
-              <p class="name">Cauliflower</p>
-              <p class="price">$12.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="product-small">
-          <div class="sale-tag-small">Sale 50%</div>
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (5).png" alt="Product" />
-          <div class="small-info">
-            <div class="text">
-              <p class="name">Green Capsicum</p>
-              <p class="price">$9.00 <span>$20.99</span></p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="product-small">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (6).png" alt="Product" />
-          <div class="small-info">
-            <div class="text">
-              <p class="name">Green Chili</p>
-              <p class="price">$12.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="product-small">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (7).png" alt="Product" />
-          <div class="small-info">
-            <div class="text">
-              <p class="name">Big Potatoes</p>
-              <p class="price">$12.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="product-small">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (8).png" alt="Product" />
-          <div class="small-info">
-            <div class="text">
-              <p class="name">Fresh Corn</p>
-              <p class="price">$12.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="product-small">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (9).png" alt="Product" />
-          <div class="small-info">
-            <div class="text">
-              <p class="name">Red Tomatoes</p>
-              <p class="price">$15.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="product-small">
-          <div class="sale-tag-small">Sale 20%</div>
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (8).png" alt="Product" />
-          <div class="small-info">
-            <div class="text">
-              <p class="name">Red Chili</p>
-              <p class="price">$10.00 <span>$12.50</span></p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="product-small">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (8).png" alt="Product" />
-          <div class="small-info">
-            <div class="text">
-              <p class="name">Surjapur Mango</p>
-              <p class="price">$30.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="caver">
-      <div class="img-caver">
-        <img src="./imges/caver.jpg" alt="" />
-        <div class="lef-img-cover">
-          <div class="caver-img-w">
-            <h6>Summer Sale</h6>
-            <h4>37% <span>OFF</span></h4>
-            <p>
-              Free on all your order, Free Shipping and 30 days money-back
-              guarantee
-            </p>
-            <a href="#" class="shop-3"
-              >Shop Now <i class="fa-solid fa-arrow-right"></i
-            ></a>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="bar-section">
-      <div class="bar">
-        <div class="nav-1 d-f1"><h3>Featured Products</h3></div>
-        <div class="nav-1 d-f2">
-          <a href="">View All <i class="fa-solid fa-arrow-right"></i></a>
-        </div>
-      </div>
-    </section>
-    <section class="Popular-Products-Wrapper">
-      <div class="Products-Grid-Container">
-        <div class="Product-Card-1">
-          <div class="sale-tag">Sale 50%</div>
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image.png" alt="" />
-          <div class="card-footer">
-            <div class="info">
-              <p class="name">Green Apple</p>
-              <p class="price">$14.99 <span>$20.99</span></p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="Product-Card-2">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (1).png" alt="" />
-          <div class="card-footer">
-            <div class="info">
-              <p class="name">Fresh Indian Malta</p>
-              <p class="price">$20.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="Product-Card-3">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (2).png" alt="" />
-          <div class="card-footer">
-            <div class="info">
-              <p class="name">Chinese cabbage</p>
-              <p class="price">$12.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="Product-Card-4">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (3).png" alt="" />
-          <div class="card-footer">
-            <div class="info">
-              <p class="name">Green Lettuce</p>
-              <p class="price">$9.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-
-        <div class="Product-Card-5">
-          <div class="side-actions">
-            <i class="fa-regular fa-heart"></i><i class="fa-regular fa-eye"></i>
-          </div>
-          <img src="./imges/Image (4).png" alt="" />
-          <div class="card-footer">
-            <div class="info">
-              <p class="name">Eggplant</p>
-              <p class="price">$34.00</p>
-              <div class="stars">★★★★★</div>
-            </div>
-            <div class="cart-icon">
-              <i class="fa-solid fa-bag-shopping"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="news-section">
-      <div class="news-container">
-        <div class="news-card">
-          <div class="card-image">
-            <img src="./imges/n1.png" alt="Food News" />
-            <div class="date-badge">
-              <span class="day">18</span>
-              <span class="month">NOV</span>
-            </div>
-          </div>
-          <div class="card-content">
-            <ul class="card-meta">
-              <li><i class="fa-solid fa-tag"></i> Food</li>
-              <li><i class="fa-regular fa-user"></i> By Admin</li>
-              <li><i class="fa-regular fa-comment"></i> 65 Comments</li>
-            </ul>
-            <h4 class="card-title">
-              Curabitur porttitor orci eget neque accumsan venenatis. Nunc
-              fermentum.
-            </h4>
-            <a href="#" class="read-more-btn"
-              >Read More <i class="fa-solid fa-arrow-right"></i
-            ></a>
-          </div>
-        </div>
-
-        <div class="news-card">
-          <div class="card-image">
-            <img src="./imges/n2.png" alt="Healthy Food" />
-            <div class="date-badge">
-              <span class="day">29</span>
-              <span class="month">JAN</span>
-            </div>
-          </div>
-          <div class="card-content">
-            <ul class="card-meta">
-              <li><i class="fa-solid fa-tag"></i> Food</li>
-              <li><i class="fa-regular fa-user"></i> By Admin</li>
-              <li><i class="fa-regular fa-comment"></i> 65 Comments</li>
-            </ul>
-            <h4 class="card-title">
-              Eget lobortis lorem lacinia. Vivamus pharetra semper.
-            </h4>
-            <a href="#" class="read-more-btn"
-              >Read More <i class="fa-solid fa-arrow-right"></i
-            ></a>
-          </div>
-        </div>
-
-        <div class="news-card">
-          <div class="card-image">
-            <img src="./imges/n3.png" alt="Salad News" />
-            <div class="date-badge">
-              <span class="day">21</span>
-              <span class="month">FEB</span>
-            </div>
-          </div>
-          <div class="card-content">
-            <ul class="card-meta">
-              <li><i class="fa-solid fa-tag"></i> Food</li>
-              <li><i class="fa-regular fa-user"></i> By Admin</li>
-              <li><i class="fa-regular fa-comment"></i> 65 Comments</li>
-            </ul>
-            <h4 class="card-title">
-              Maecenas blandit risus elementum mauris malesuada.
-            </h4>
-            <a href="#" class="read-more-btn"
-              >Read More <i class="fa-solid fa-arrow-right"></i
-            ></a>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="testimonials">
-      <div class="container">
-        <div class="testimonials-header">
-          <h3>Client Testimonials</h3>
-          <div class="slider-controls">
-            <button class="control-btn">
-              <i class="fa-solid fa-arrow-left"></i>
-            </button>
-            <button class="control-btn active">
-              <i class="fa-solid fa-arrow-right"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="testimonials-container">
-          <div class="testimonial-card">
-            <i class="fa-solid fa-quote-left quote-icon"></i>
-            <p class="feedback">
-              Pellentesque eu nibh eget mauris congue mattis mattis nec tellus.
-              Phasellus imperdiet elit eu magna tincidunt, bibendum cursus velit
-              sodales. Donec sed neque eget
-            </p>
-            <div class="card-footer">
-              <div class="user-info">
-                <img src="./imges/PER1 (1).png" alt="Robert Fox" />
-                <div class="user-text">
-                  <h4>Robert Fox</h4>
-                  <span>Customer</span>
-                </div>
-              </div>
-              <div class="stars">
-                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i
-                ><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i
-                ><i class="fa-solid fa-star"></i>
-              </div>
-            </div>
-          </div>
-
-          <div class="testimonial-card">
-            <i class="fa-solid fa-quote-left quote-icon"></i>
-            <p class="feedback">
-              Pellentesque eu nibh eget mauris congue mattis mattis nec tellus.
-              Phasellus imperdiet elit eu magna tincidunt, bibendum cursus velit
-              sodales. Donec sed neque eget
-            </p>
-            <div class="card-footer">
-              <div class="user-info">
-                <img src="./imges/PER1 (2).png" alt="Dianne Russell" />
-                <div class="user-text">
-                  <h4>Dianne Russell</h4>
-                  <span>Customer</span>
-                </div>
-              </div>
-              <div class="stars">
-                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i
-                ><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i
-                ><i class="fa-solid fa-star"></i>
-              </div>
-            </div>
-          </div>
-
-          <div class="testimonial-card">
-            <i class="fa-solid fa-quote-left quote-icon"></i>
-            <p class="feedback">
-              Pellentesque eu nibh eget mauris congue mattis mattis nec tellus.
-              Phasellus imperdiet elit eu magna tincidunt, bibendum cursus velit
-              sodales. Donec sed neque eget
-            </p>
-            <div class="card-footer">
-              <div class="user-info">
-                <img src="./imges/PER1 (3).png" alt="Eleanor Pena" />
-                <div class="user-text">
-                  <h4>Eleanor Pena</h4>
-                  <span>Customer</span>
-                </div>
-              </div>
-              <div class="stars">
-                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i
-                ><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i
-                ><i class="fa-solid fa-star"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="social-section">
-      <div class="brands-row">
-        <div class="container brands-flex">
-          <img src="./imges/Vector (1).png" alt="steps" />
-          <img src="./imges/Group (2).png" alt="mango" />
-          <img src="./imges/Group (3).png" alt="food" />
-          <img src="./imges/Group (4).png" alt="food" />
-          <img src="./imges/Group (5).png" alt="book-off" />
-          <img src="./imges/Group (6).png" alt="g-series" />
-        </div>
+  <!-- Categories Section -->
+  <section id="categories" class="py-20 bg-gray-50 dark:bg-gray-800">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl lg:text-5xl font-bold text-gray-800 dark:text-white mb-4">Popular Categories</h2>
+        <p class="text-gray-600 dark:text-gray-400 text-lg max-w-2xl mx-auto">Browse through our wide range of fresh
+          organic products</p>
       </div>
 
-      <div class="instagram-feed">
-        <h3 class="insta-title">Follow us on Instagram</h3>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+        <div
+          class="category-card group bg-white dark:bg-gray-900 rounded-3xl p-6 text-center hover:shadow-2xl transition-all duration-500 cursor-pointer flying-card">
+          <div class="w-24 h-24 mx-auto mb-4">
+            <img src="./imges/1.png" alt="Fruit" class="w-full h-full object-contain group-hover:scale-110 transition"
+              onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-solid fa-apple-whole text-6xl text-brand-green\'></i>'" />
+          </div>
+          <h3 class="font-bold text-gray-800 dark:text-white group-hover:text-brand-green transition">Fresh Fruit</h3>
+        </div>
+
+        <div
+          class="category-card group bg-white dark:bg-gray-900 rounded-3xl p-6 text-center hover:shadow-2xl transition-all duration-500 cursor-pointer flying-card">
+          <div class="w-24 h-24 mx-auto mb-4">
+            <img src="./imges/2.png" alt="Vegetables"
+              class="w-full h-full object-contain group-hover:scale-110 transition"
+              onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-solid fa-carrot text-6xl text-brand-green\'></i>'" />
+          </div>
+          <h3 class="font-bold text-gray-800 dark:text-white group-hover:text-brand-green transition">Vegetables</h3>
+        </div>
+
+        <div
+          class="category-card group bg-white dark:bg-gray-900 rounded-3xl p-6 text-center hover:shadow-2xl transition-all duration-500 cursor-pointer flying-card">
+          <div class="w-24 h-24 mx-auto mb-4">
+            <img src="./imges/3.png" alt="Meat" class="w-full h-full object-contain group-hover:scale-110 transition"
+              onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-solid fa-drumstick-bite text-6xl text-brand-green\'></i>'" />
+          </div>
+          <h3 class="font-bold text-gray-800 dark:text-white group-hover:text-brand-green transition">Meat & Fish</h3>
+        </div>
+
+        <div
+          class="category-card group bg-white dark:bg-gray-900 rounded-3xl p-6 text-center hover:shadow-2xl transition-all duration-500 cursor-pointer flying-card">
+          <div class="w-24 h-24 mx-auto mb-4">
+            <img src="./imges/4.png" alt="Dairy" class="w-full h-full object-contain group-hover:scale-110 transition"
+              onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-solid fa-cheese text-6xl text-brand-green\'></i>'" />
+          </div>
+          <h3 class="font-bold text-gray-800 dark:text-white group-hover:text-brand-green transition">Dairy & Eggs</h3>
+        </div>
+
+        <div
+          class="category-card group bg-white dark:bg-gray-900 rounded-3xl p-6 text-center hover:shadow-2xl transition-all duration-500 cursor-pointer flying-card">
+          <div class="w-24 h-24 mx-auto mb-4">
+            <img src="./imges/5.png" alt="Bakery" class="w-full h-full object-contain group-hover:scale-110 transition"
+              onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-solid fa-bread-slice text-6xl text-brand-green\'></i>'" />
+          </div>
+          <h3 class="font-bold text-gray-800 dark:text-white group-hover:text-brand-green transition">Bakery</h3>
+        </div>
+
+        <div
+          class="category-card group bg-white dark:bg-gray-900 rounded-3xl p-6 text-center hover:shadow-2xl transition-all duration-500 cursor-pointer flying-card">
+          <div class="w-24 h-24 mx-auto mb-4">
+            <img src="./imges/6.png" alt="Beverages"
+              class="w-full h-full object-contain group-hover:scale-110 transition"
+              onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fa-solid fa-wine-bottle text-6xl text-brand-green\'></i>'" />
+          </div>
+          <h3 class="font-bold text-gray-800 dark:text-white group-hover:text-brand-green transition">Beverages</h3>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Section -->
+  <section id="shop" class="py-20 bg-white dark:bg-gray-900">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex flex-col lg:flex-row justify-between items-center mb-12">
         <div>
-          <div class="insta-grid">
-            <div class="insta-box">
-              <img src="./imges/T1.jpg" alt="" /><i
-                class="fa-brands fa-instagram"
-              ></i>
-            </div>
-            <div class="insta-box">
-              <img src="./imges/T2.jpg" alt="" /><i
-                class="fa-brands fa-instagram"
-              ></i>
-            </div>
-            <div class="insta-box">
-              <img src="./imges/T3.jpg" alt="" /><i
-                class="fa-brands fa-instagram"
-              ></i>
-            </div>
-            <div class="insta-box">
-              <img src="./imges/T4.jpg" alt="" /><i
-                class="fa-brands fa-instagram"
-              ></i>
-            </div>
-            <div class="insta-box">
-              <img src="./imges/T5.jpg" alt="" /><i
-                class="fa-brands fa-instagram"
-              ></i>
-            </div>
-            <div class="insta-box">
-              <img src="./imges/T6.jpg" alt="" /><i
-                class="fa-brands fa-instagram"
-              ></i>
-            </div>
-          </div>
+          <h2 class="text-4xl lg:text-5xl font-bold text-gray-800 dark:text-white mb-2">Popular Products</h2>
+          <p class="text-gray-600 dark:text-gray-400">Discover our best-selling organic products</p>
         </div>
-      </div>
-    </section>
-    <section class="newsletter-section">
-      <div class="container newsletter-flex">
-        <div class="newsletter-text">
-          <h3>Subcribe our Newsletter</h3>
-          <p>
-            Pellentesque eu nibh eget mauris congue mattis mattis nec tellus.
-            Phasellus imperdiet elit eu magna.
-          </p>
-        </div>
-        <div class="newsletter-form">
-          <div class="input-group">
-            <input type="email" placeholder="Your email address" />
-            <button type="submit">Subscribe</button>
-          </div>
-          <div class="social-icons">
-            <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-            <a href="#"><i class="fa-brands fa-twitter"></i></a>
-            <a href="#"><i class="fa-brands fa-pinterest-p"></i></a>
-            <a href="#"><i class="fa-brands fa-instagram"></i></a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <footer class="main-footer">
-      <div class="container footer-grid">
-        <div class="footer-col about">
-          <div class="footer-logo">
-            <img src="./imges/footer-logo.png" alt="Ecobazar" />
-            <h2>Ecobazar</h2>
-          </div>
-          <p>
-            Morbi cursus porttitor enim lobortis molestie. Duis gravida turpis
-            velit, eget bibendum magna congue nec.
-          </p>
-          <div class="contact-links">
-            <a href="tel:2195550114">(219) 555-0114</a>
-            <span>or</span>
-            <a href="mailto:Proxy@gmail.com">Proxy@gmail.com</a>
-          </div>
-        </div>
-
-        <div class="footer-col">
-          <h4>My Account</h4>
-          <ul>
-            <li><a href="#">My Account</a></li>
-            <li><a href="#">Order History</a></li>
-            <li><a href="#">Shopping Cart</a></li>
-            <li><a href="#">Wishlist</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h4>Helps</h4>
-          <ul>
-            <li><a href="#">Contact</a></li>
-            <li><a href="#">Faqs</a></li>
-            <li><a href="#">Terms & Condition</a></li>
-            <li><a href="#">Privacy Policy</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h4>Proxy</h4>
-          <ul>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Shop</a></li>
-            <li><a href="#">Product</a></li>
-            <li><a href="#">Track Order</a></li>
-          </ul>
-        </div>
-
-        <div class="footer-col">
-          <h4>Categories</h4>
-          <ul>
-            <li><a href="#">Fruit & Vegetables</a></li>
-            <li><a href="#">Meat & Fish</a></li>
-            <li><a href="#">Bread & Bakery</a></li>
-            <li><a href="#">Beauty & Health</a></li>
-          </ul>
+        <div class="flex gap-2 mt-6 lg:mt-0 flex-wrap justify-center">
+          <button
+            class="filter-btn active bg-brand-green text-white px-6 py-3 rounded-full font-semibold transition hover:shadow-lg"
+            data-filter="all">All</button>
+          <button
+            class="filter-btn bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-6 py-3 rounded-full font-semibold hover:bg-brand-green hover:text-white transition"
+            data-filter="fruit">Fruits</button>
+          <button
+            class="filter-btn bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-6 py-3 rounded-full font-semibold hover:bg-brand-green hover:text-white transition"
+            data-filter="vegetable">Vegetables</button>
+          <button
+            class="filter-btn bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-6 py-3 rounded-full font-semibold hover:bg-brand-green hover:text-white transition"
+            data-filter="meat">Meat</button>
+          <button
+            class="filter-btn bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-6 py-3 rounded-full font-semibold hover:bg-brand-green hover:text-white transition"
+            data-filter="dairy">Dairy</button>
+          <button
+            class="filter-btn bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-6 py-3 rounded-full font-semibold hover:bg-brand-green hover:text-white transition"
+            data-filter="bakery">Bakery</button>
         </div>
       </div>
 
-      <div class="footer-bottom">
-        <div class="container bottom-flex">
-          <p>Ecobazar eCommerce © 2021. All Rights Reserved</p>
-          <div class="payment-methods">
-            <img src="./imges/Method=ApplePay.png" alt="Apple-Pay"/>
-            <img src="./imges/Method=Visa.png" alt="Visa" />
-            <img src="./imges/Method=Mastercard.png" alt="Mastercard" />
-            <img src="./imges/Method=Discover.png" alt="Secure Payment" />
+      <div class="Products-Grid-Container grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="products-grid">
+        <!-- Products will be loaded dynamically -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Deals Section -->
+  <section id="deals" class="py-20 bg-gradient-to-br from-green-50 to-white dark:from-gray-800 dark:to-gray-900">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl lg:text-5xl font-bold text-gray-800 dark:text-white mb-4">Hot Deals</h2>
+        <p class="text-gray-600 dark:text-gray-400 text-lg">Limited time offers - Don't miss out!</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="deal-card group relative rounded-3xl overflow-hidden shadow-2xl h-[500px] flying-card">
+          <img src="./imges/img-1.jpg" alt="Deal"
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            onerror="this.src='./imges/img-1.jpg'" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-8 text-white">
+            <div class="inline-block bg-brand-green px-4 py-2 rounded-full text-sm font-bold mb-4">BEST DEAL</div>
+            <h3 class="text-3xl font-bold mb-4">Sale of the Month</h3>
+
+            <div class="flex gap-3 mb-6" id="countdown-1">
+              <div class="bg-white/20 backdrop-blur rounded-xl p-3 text-center min-w-[70px]">
+                <div class="text-2xl font-bold" id="days-1">00</div>
+                <div class="text-xs opacity-80">DAYS</div>
+              </div>
+              <div class="text-2xl font-bold self-center">:</div>
+              <div class="bg-white/20 backdrop-blur rounded-xl p-3 text-center min-w-[70px]">
+                <div class="text-2xl font-bold" id="hours-1">00</div>
+                <div class="text-xs opacity-80">HRS</div>
+              </div>
+              <div class="text-2xl font-bold self-center">:</div>
+              <div class="bg-white/20 backdrop-blur rounded-xl p-3 text-center min-w-[70px]">
+                <div class="text-2xl font-bold" id="mins-1">00</div>
+                <div class="text-xs opacity-80">MINS</div>
+              </div>
+              <div class="text-2xl font-bold self-center">:</div>
+              <div class="bg-white/20 backdrop-blur rounded-xl p-3 text-center min-w-[70px]">
+                <div class="text-2xl font-bold" id="secs-1">00</div>
+                <div class="text-xs opacity-80">SECS</div>
+              </div>
+            </div>
+
+            <button
+              class="w-full bg-white text-brand-green py-4 rounded-full font-bold hover:bg-brand-green hover:text-white transition magnetic-btn">
+              Shop Now <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="deal-card group relative rounded-3xl overflow-hidden shadow-2xl h-[500px] flying-card">
+          <img src="./imges/img-3.jpg" alt="Deal"
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            onerror="this.src='./imges/img-3.jpg'" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-8 text-white">
+            <div class="inline-block bg-brand-green px-4 py-2 rounded-full text-sm font-bold mb-4">85% FAT FREE</div>
+            <h3 class="text-3xl font-bold mb-2">Low-Fat Meat</h3>
+            <p class="text-xl mb-6">Starting at <span class="text-brand-orange font-bold text-3xl">$79.99</span></p>
+            <button
+              class="w-full bg-white text-brand-green py-4 rounded-full font-bold hover:bg-brand-green hover:text-white transition magnetic-btn">
+              Shop Now <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="deal-card group relative rounded-3xl overflow-hidden shadow-2xl h-[500px] flying-card">
+          <img src="./imges/img2.jpg" alt="Deal"
+            class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+            onerror="this.src='./imges/img2.jpg'" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+          <div class="absolute bottom-0 left-0 right-0 p-8 text-white">
+            <div class="inline-block bg-brand-green px-4 py-2 rounded-full text-sm font-bold mb-4">SUMMER SALE</div>
+            <h3 class="text-3xl font-bold mb-2">100% Fresh Fruit</h3>
+            <p class="text-xl mb-6">Up to <span class="bg-brand-dark px-3 py-1 rounded font-bold">64% OFF</span></p>
+            <button
+              class="w-full bg-white text-brand-green py-4 rounded-full font-bold hover:bg-brand-green hover:text-white transition magnetic-btn">
+              Shop Now <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
           </div>
         </div>
       </div>
-    </footer>
-  </body>
+    </div>
+  </section>
+
+  <!-- Blog Section -->
+  <section id="blog" class="py-20 bg-gray-50 dark:bg-gray-800">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-4xl lg:text-5xl font-bold text-gray-800 dark:text-white mb-4">Latest News</h2>
+        <p class="text-gray-600 dark:text-gray-400 text-lg">Stay updated with our latest articles</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <article
+          class="bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition flying-card">
+          <div class="relative overflow-hidden">
+            <img src="./imges/n1.png" alt="Blog"
+              class="w-full h-64 object-cover hover:scale-110 transition duration-500"
+              onerror="this.src='./imges/n1.png'" />
+            <div class="absolute bottom-4 left-4 bg-white dark:bg-gray-800 px-4 py-2 rounded-lg text-center">
+              <span class="block text-xl font-bold text-brand-green">18</span>
+              <span class="text-xs text-gray-600 dark:text-gray-400">NOV</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-3">
+              <span><i class="fa-solid fa-tag text-brand-green mr-1"></i> Food</span>
+              <span><i class="fa-regular fa-user text-brand-green mr-1"></i> Admin</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4 hover:text-brand-green transition">Fresh
+              Organic Vegetables Benefits</h3>
+            <a href="#" class="inline-flex items-center text-brand-green font-semibold hover:gap-2 transition">Read More
+              <i class="fa-solid fa-arrow-right ml-1"></i></a>
+          </div>
+        </article>
+
+        <article
+          class="bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition flying-card">
+          <div class="relative overflow-hidden">
+            <img src="./imges/n2.png" alt="Blog"
+              class="w-full h-64 object-cover hover:scale-110 transition duration-500"
+              onerror="this.src='./imges/n2.png'" />
+            <div class="absolute bottom-4 left-4 bg-white dark:bg-gray-800 px-4 py-2 rounded-lg text-center">
+              <span class="block text-xl font-bold text-brand-green">29</span>
+              <span class="text-xs text-gray-600 dark:text-gray-400">JAN</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-3">
+              <span><i class="fa-solid fa-tag text-brand-green mr-1"></i> Health</span>
+              <span><i class="fa-regular fa-user text-brand-green mr-1"></i> Admin</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4 hover:text-brand-green transition">Healthy
+              Eating Habits Guide</h3>
+            <a href="#" class="inline-flex items-center text-brand-green font-semibold hover:gap-2 transition">Read More
+              <i class="fa-solid fa-arrow-right ml-1"></i></a>
+          </div>
+        </article>
+
+        <article
+          class="bg-white dark:bg-gray-900 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition flying-card">
+          <div class="relative overflow-hidden">
+            <img src="./imges/n3.png" alt="Blog"
+              class="w-full h-64 object-cover hover:scale-110 transition duration-500"
+              onerror="this.src='./imges/n3.png'" />
+            <div class="absolute bottom-4 left-4 bg-white dark:bg-gray-800 px-4 py-2 rounded-lg text-center">
+              <span class="block text-xl font-bold text-brand-green">21</span>
+              <span class="text-xs text-gray-600 dark:text-gray-400">FEB</span>
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400 mb-3">
+              <span><i class="fa-solid fa-tag text-brand-green mr-1"></i> Tips</span>
+              <span><i class="fa-regular fa-user text-brand-green mr-1"></i> Admin</span>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 dark:text-white mb-4 hover:text-brand-green transition">Best
+              Salad Recipes 2024</h3>
+            <a href="#" class="inline-flex items-center text-brand-green font-semibold hover:gap-2 transition">Read More
+              <i class="fa-solid fa-arrow-right ml-1"></i></a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter Section -->
+  <section class="py-20 bg-brand-green relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+    </div>
+
+    <div class="max-w-4xl mx-auto px-4 text-center relative z-10">
+      <h2 class="text-4xl lg:text-5xl font-bold text-white mb-6">Subscribe to Our Newsletter</h2>
+      <p class="text-white/90 text-lg mb-8">Get exclusive offers, new arrivals, and 10% off your first order!</p>
+
+      <form id="newsletter-form" class="flex flex-col sm:flex-row gap-4 max-w-2xl mx-auto">
+        <input type="email" id="newsletter-email" placeholder="Enter your email"
+          class="flex-1 px-8 py-5 rounded-full text-gray-800 focus:outline-none focus:ring-4 focus:ring-white/30 text-lg"
+          required />
+        <button type="submit"
+          class="bg-brand-dark text-white px-10 py-5 rounded-full font-bold hover:bg-black transition magnetic-btn shadow-xl">
+          Subscribe <i class="fa-solid fa-paper-plane ml-2"></i>
+        </button>
+      </form>
+
+      <div class="flex justify-center gap-4 mt-8">
+        <a href="#"
+          class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-white hover:bg-white hover:text-brand-green transition magnetic-btn">
+          <i class="fa-brands fa-facebook-f text-xl"></i>
+        </a>
+        <a href="#"
+          class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-white hover:bg-white hover:text-brand-green transition magnetic-btn">
+          <i class="fa-brands fa-twitter text-xl"></i>
+        </a>
+        <a href="#"
+          class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-white hover:bg-white hover:text-brand-green transition magnetic-btn">
+          <i class="fa-brands fa-instagram text-xl"></i>
+        </a>
+        <a href="#"
+          class="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center text-white hover:bg-white hover:text-brand-green transition magnetic-btn">
+          <i class="fa-brands fa-youtube text-xl"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer id="contact" class="bg-gray-900 dark:bg-black text-white py-16">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+        <div>
+          <div class="flex items-center gap-3 mb-6">
+            <div class="w-12 h-12 bg-brand-green rounded-xl flex items-center justify-center">
+              <i class="fa-solid fa-leaf text-white text-2xl"></i>
+            </div>
+            <h3 class="text-2xl font-bold">Ecobazar</h3>
+          </div>
+          <p class="text-gray-400 mb-6">Your trusted source for 100% organic and fresh products. Quality guaranteed!</p>
+          <div class="space-y-2">
+            <p class="flex items-center gap-2"><i class="fa-solid fa-phone text-brand-green"></i> (219) 555-0114</p>
+            <p class="flex items-center gap-2"><i class="fa-solid fa-envelope text-brand-green"></i> hello@ecobazar.com
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="text-xl font-bold mb-6">Quick Links</h4>
+          <ul class="space-y-3">
+            <li><a href="#home" class="text-gray-400 hover:text-brand-green transition">Home</a></li>
+            <li><a href="#shop" class="text-gray-400 hover:text-brand-green transition">Shop</a></li>
+            <li><a href="#deals" class="text-gray-400 hover:text-brand-green transition">Deals</a></li>
+            <li><a href="#blog" class="text-gray-400 hover:text-brand-green transition">Blog</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-xl font-bold mb-6">Categories</h4>
+          <ul class="space-y-3">
+            <li><a href="#" class="text-gray-400 hover:text-brand-green transition">Fruits & Vegetables</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-brand-green transition">Meat & Fish</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-brand-green transition">Bakery</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-brand-green transition">Health & Beauty</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-xl font-bold mb-6">Payment Methods</h4>
+          <div class="flex gap-3 flex-wrap">
+            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968690.png" alt="Visa"
+              class="w-12 h-12 opacity-70 hover:opacity-100 transition" />
+            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968692.png" alt="Mastercard"
+              class="w-12 h-12 opacity-70 hover:opacity-100 transition" />
+            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968694.png" alt="PayPal"
+              class="w-12 h-12 opacity-70 hover:opacity-100 transition" />
+            <img src="https://cdn-icons-png.flaticon.com/512/5968/5968696.png" alt="Apple Pay"
+              class="w-12 h-12 opacity-70 hover:opacity-100 transition" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to Top -->
+  <button id="back-to-top"
+    class="fixed bottom-8 right-8 w-14 h-14 bg-brand-green text-white rounded-full shadow-2xl flex items-center justify-center opacity-0 invisible transition-all duration-300 hover:bg-brand-green-dark hover:scale-110 z-[999] magnetic-btn">
+    <i class="fa-solid fa-arrow-up text-xl"></i>
+  </button>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    // LARGE DIVERSE PRODUCTS ARRAY (50 Products - All Categories)
+    const products = [
+      // Fruits (1-10)
+      { id: 1, name: "Green Apple", price: 14.99, oldPrice: 20.99, image: "./imges/Image.png", category: "fruit", rating: 5, sale: true },
+      { id: 2, name: "Fresh Orange", price: 20.00, oldPrice: null, image: "./imges/Image (1).png", category: "fruit", rating: 5, sale: false },
+      { id: 3, name: "Fresh Banana", price: 6.99, oldPrice: 9.99, image: "./imges/Image (2).png", category: "fruit", rating: 5, sale: true },
+      { id: 4, name: "Strawberry", price: 15.99, oldPrice: null, image: "./imges/Image (3).png", category: "fruit", rating: 5, sale: false },
+      { id: 5, name: "Fresh Mango", price: 18.99, oldPrice: null, image: "./imges/Image (4).png", category: "fruit", rating: 5, sale: false },
+      { id: 6, name: "Watermelon", price: 12.99, oldPrice: 16.99, image: "./imges/Image (5).png", category: "fruit", rating: 5, sale: true },
+      { id: 7, name: "Fresh Lemon", price: 9.99, oldPrice: 12.99, image: "./imges/Image (6).png", category: "fruit", rating: 5, sale: true },
+      { id: 8, name: "Purple Grapes", price: 16.99, oldPrice: null, image: "./imges/Image (7).png", category: "fruit", rating: 5, sale: false },
+      { id: 9, name: "Pineapple", price: 14.99, oldPrice: null, image: "./imges/Image (8).png", category: "fruit", rating: 5, sale: false },
+      { id: 10, name: "Fresh Peach", price: 17.99, oldPrice: null, image: "./imges/Image (9).png", category: "fruit", rating: 5, sale: false },
+
+      // Vegetables (11-20)
+      { id: 11, name: "Chinese Cabbage", price: 12.00, oldPrice: null, image: "./imges/Image.png", category: "vegetable", rating: 5, sale: false },
+      { id: 12, name: "Green Lettuce", price: 9.00, oldPrice: null, image: "./imges/Image (1).png", category: "vegetable", rating: 5, sale: false },
+      { id: 13, name: "Eggplant", price: 34.00, oldPrice: null, image: "./imges/Image (2).png", category: "vegetable", rating: 5, sale: false },
+      { id: 14, name: "Big Potatoes", price: 20.00, oldPrice: null, image: "./imges/Image (3).png", category: "vegetable", rating: 5, sale: false },
+      { id: 15, name: "Fresh Corn", price: 20.00, oldPrice: null, image: "./imges/Image (4).png", category: "vegetable", rating: 5, sale: false },
+      { id: 16, name: "Fresh Cauliflower", price: 12.00, oldPrice: null, image: "./imges/Image (5).png", category: "vegetable", rating: 5, sale: false },
+      { id: 17, name: "Green Capsicum", price: 9.00, oldPrice: 20.99, image: "./imges/Image (6).png", category: "vegetable", rating: 5, sale: true },
+      { id: 18, name: "Green Chili", price: 34.00, oldPrice: null, image: "./imges/Image (7).png", category: "vegetable", rating: 5, sale: false },
+      { id: 19, name: "Red Tomato", price: 8.99, oldPrice: null, image: "./imges/Image (8).png", category: "vegetable", rating: 5, sale: false },
+      { id: 20, name: "Fresh Carrot", price: 7.99, oldPrice: null, image: "./imges/Image (9).png", category: "vegetable", rating: 5, sale: false },
+
+      // Meat & Fish (21-30)
+      { id: 21, name: "Fresh Chicken", price: 45.99, oldPrice: 55.99, image: "./imges/Image.png", category: "meat", rating: 5, sale: true },
+      { id: 22, name: "Beef Steak", price: 89.99, oldPrice: null, image: "./imges/Image (1).png", category: "meat", rating: 5, sale: false },
+      { id: 23, name: "Fresh Fish", price: 65.00, oldPrice: null, image: "./imges/Image (2).png", category: "meat", rating: 5, sale: false },
+      { id: 24, name: "Lamb Chops", price: 95.00, oldPrice: 120.00, image: "./imges/Image (3).png", category: "meat", rating: 5, sale: true },
+      { id: 25, name: "Pork Sausage", price: 35.00, oldPrice: null, image: "./imges/Image (4).png", category: "meat", rating: 5, sale: false },
+      { id: 26, name: "Turkey Breast", price: 55.00, oldPrice: null, image: "./imges/Image (5).png", category: "meat", rating: 5, sale: false },
+      { id: 27, name: "Salmon Fillet", price: 125.00, oldPrice: 150.00, image: "./imges/Image (6).png", category: "meat", rating: 5, sale: true },
+      { id: 28, name: "Shrimp", price: 85.00, oldPrice: null, image: "./imges/Image (7).png", category: "meat", rating: 5, sale: false },
+      { id: 29, name: "Ground Beef", price: 42.00, oldPrice: null, image: "./imges/Image (8).png", category: "meat", rating: 5, sale: false },
+      { id: 30, name: "Chicken Wings", price: 38.00, oldPrice: 45.00, image: "./imges/Image (9).png", category: "meat", rating: 5, sale: true },
+
+      // Dairy & Eggs (31-40)
+      { id: 31, name: "Fresh Milk", price: 8.99, oldPrice: null, image: "./imges/Image.png", category: "dairy", rating: 5, sale: false },
+      { id: 32, name: "Cheddar Cheese", price: 18.99, oldPrice: null, image: "./imges/Image (1).png", category: "dairy", rating: 5, sale: false },
+      { id: 33, name: "Greek Yogurt", price: 12.99, oldPrice: 15.99, image: "./imges/Image (2).png", category: "dairy", rating: 5, sale: true },
+      { id: 34, name: "Fresh Eggs", price: 15.99, oldPrice: null, image: "./imges/Image (3).png", category: "dairy", rating: 5, sale: false },
+      { id: 35, name: "Butter", price: 11.99, oldPrice: null, image: "./imges/Image (4).png", category: "dairy", rating: 5, sale: false },
+      { id: 36, name: "Mozzarella", price: 16.99, oldPrice: 20.99, image: "./imges/Image (5).png", category: "dairy", rating: 5, sale: true },
+      { id: 37, name: "Cream Cheese", price: 13.99, oldPrice: null, image: "./imges/Image (6).png", category: "dairy", rating: 5, sale: false },
+      { id: 38, name: "Sour Cream", price: 9.99, oldPrice: null, image: "./imges/Image (7).png", category: "dairy", rating: 5, sale: false },
+      { id: 39, name: "Cottage Cheese", price: 14.99, oldPrice: null, image: "./imges/Image (8).png", category: "dairy", rating: 5, sale: false },
+      { id: 40, name: "Heavy Cream", price: 10.99, oldPrice: 13.99, image: "./imges/Image (9).png", category: "dairy", rating: 5, sale: true },
+
+      // Bakery (41-50)
+      { id: 41, name: "Whole Wheat Bread", price: 6.99, oldPrice: null, image: "./imges/Image.png", category: "bakery", rating: 5, sale: false },
+      { id: 42, name: "Croissant", price: 4.99, oldPrice: 6.99, image: "./imges/Image (1).png", category: "bakery", rating: 5, sale: true },
+      { id: 43, name: "Baguette", price: 5.99, oldPrice: null, image: "./imges/Image (2).png", category: "bakery", rating: 5, sale: false },
+      { id: 44, name: "Donuts", price: 8.99, oldPrice: null, image: "./imges/Image (3).png", category: "bakery", rating: 5, sale: false },
+      { id: 45, name: "Muffins", price: 7.99, oldPrice: 9.99, image: "./imges/Image (4).png", category: "bakery", rating: 5, sale: true },
+      { id: 46, name: "Bagel", price: 3.99, oldPrice: null, image: "./imges/Image (5).png", category: "bakery", rating: 5, sale: false },
+      { id: 47, name: "Sourdough", price: 9.99, oldPrice: null, image: "./imges/Image (6).png", category: "bakery", rating: 5, sale: false },
+      { id: 48, name: "Pita Bread", price: 4.99, oldPrice: null, image: "./imges/Image (7).png", category: "bakery", rating: 5, sale: false },
+      { id: 49, name: "Ciabatta", price: 6.99, oldPrice: 8.99, image: "./imges/Image (8).png", category: "bakery", rating: 5, sale: true },
+      { id: 50, name: "Rye Bread", price: 7.99, oldPrice: null, image: "./imges/Image (9).png", category: "bakery", rating: 5, sale: false },
+    ];
+
+    let cart = [];
+
+    // Page Load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('loading-screen').style.opacity = '0';
+        setTimeout(() => {
+          document.getElementById('loading-screen').style.display = 'none';
+          initAnimations();
+        }, 500);
+      }, 1000);
+    });
+
+    function initAnimations() {
+      gsap.utils.toArray('.flying-card').forEach((card, i) => {
+        gsap.fromTo(card,
+          { y: -100, opacity: 0, rotateX: 15 },
+          {
+            y: 0,
+            opacity: 1,
+            rotateX: 0,
+            duration: 0.8,
+            delay: i * 0.1,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: card,
+              start: "top 85%",
+              toggleActions: "play none none reverse"
+            }
+          }
+        );
+      });
+
+      ScrollTrigger.create({
+        start: "top -80",
+        end: 99999,
+        onUpdate: (self) => {
+          const header = document.getElementById('header');
+          if (self.scroll() > 50) {
+            header.classList.add('nav-scrolled');
+          } else {
+            header.classList.remove('nav-scrolled');
+          }
+        }
+      });
+    }
+
+    // Render Products
+    function renderProducts(productsToRender) {
+      const grid = document.getElementById('products-grid');
+      grid.innerHTML = productsToRender.map((product, index) => `
+                <div class="product-card bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-lg flying-card" style="transition-delay: ${index * 50}ms">
+                    <div class="relative overflow-hidden">
+                        ${product.sale ? '<div class="absolute top-4 left-4 bg-brand-red text-white px-4 py-2 rounded-full text-sm font-bold z-10">Sale 50%</div>' : ''}
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-64 object-cover hover:scale-110 transition-transform duration-500" onerror="this.src='./imges/Image.png'" />
+                        <div class="absolute top-4 right-4 flex flex-col gap-2">
+                            <button class="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center hover:bg-brand-red hover:text-white transition shadow-lg">
+                                <i class="fa-regular fa-heart"></i>
+                            </button>
+                            <button class="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center hover:bg-brand-blue hover:text-white transition shadow-lg">
+                                <i class="fa-regular fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-bold text-lg text-gray-800 dark:text-white mb-2">${product.name}</h3>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center gap-1 text-brand-orange text-sm">
+                                ${'<i class="fa-solid fa-star"></i>'.repeat(product.rating)}
+                            </div>
+                            <div class="text-brand-green font-bold text-xl">$${product.price.toFixed(2)} ${product.oldPrice ? `<span class="text-gray-400 line-through text-sm">$${product.oldPrice.toFixed(2)}</span>` : ''}</div>
+                        </div>
+                        <button onclick="addToCart(${product.id})" class="w-full bg-brand-green text-white py-3 rounded-full font-bold hover:bg-brand-green-dark transition magnetic-btn flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-bag-shopping"></i> Add to Cart
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+      setTimeout(() => {
+        gsap.utils.toArray('.flying-card').forEach((card, i) => {
+          gsap.fromTo(card,
+            { y: -100, opacity: 0 },
+            { y: 0, opacity: 1, duration: 0.6, delay: i * 0.05, ease: "power3.out" }
+          );
+        });
+      }, 100);
+    }
+
+    // Cart Functions
+    function addToCart(productId) {
+      const product = products.find(p => p.id === productId);
+      const existingItem = cart.find(item => item.id === productId);
+
+      if (existingItem) {
+        existingItem.quantity++;
+      } else {
+        cart.push({ ...product, quantity: 1 });
+      }
+
+      updateCart();
+      showToast('Added to Cart!', `${product.name} has been added`);
+
+      gsap.fromTo('#cart-count', { scale: 1.5 }, { scale: 1, duration: 0.3, ease: "back.out(1.7)" });
+    }
+
+    function removeFromCart(productId) {
+      cart = cart.filter(item => item.id !== productId);
+      updateCart();
+    }
+
+    function updateQuantity(productId, change) {
+      const item = cart.find(item => item.id === productId);
+      if (item) {
+        item.quantity += change;
+        if (item.quantity <= 0) removeFromCart(productId);
+        else updateCart();
+      }
+    }
+
+    function updateCart() {
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+      document.getElementById('cart-count').textContent = totalItems;
+      document.getElementById('cart-count').style.opacity = totalItems > 0 ? '1' : '0';
+      document.getElementById('cart-count').style.transform = totalItems > 0 ? 'scale(1)' : 'scale(0)';
+      document.getElementById('cart-total').textContent = `$${totalPrice.toFixed(2)}`;
+
+      const cartItems = document.getElementById('cart-items');
+      if (cart.length === 0) {
+        cartItems.innerHTML = `
+                    <div class="text-center py-10">
+                        <div class="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fa-solid fa-basket-shopping text-4xl text-gray-400"></i>
+                        </div>
+                        <p class="text-gray-500 dark:text-gray-400 text-lg">Your cart is empty</p>
+                    </div>
+                `;
+      } else {
+        cartItems.innerHTML = cart.map(item => `
+                    <div class="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl">
+                        <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded-lg" onerror="this.src='./imges/Image.png'" />
+                        <div class="flex-1">
+                            <h4 class="font-bold text-sm dark:text-white">${item.name}</h4>
+                            <p class="text-brand-green font-bold">$${item.price.toFixed(2)}</p>
+                            <div class="flex items-center gap-2 mt-2">
+                                <button onclick="updateQuantity(${item.id}, -1)" class="w-7 h-7 bg-white dark:bg-gray-600 border rounded-full flex items-center justify-center hover:bg-brand-green hover:text-white transition">-</button>
+                                <span class="font-bold dark:text-white">${item.quantity}</span>
+                                <button onclick="updateQuantity(${item.id}, 1)" class="w-7 h-7 bg-white dark:bg-gray-600 border rounded-full flex items-center justify-center hover:bg-brand-green hover:text-white transition">+</button>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${item.id})" class="text-gray-400 hover:text-brand-red transition">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `).join('');
+      }
+    }
+
+    function showToast(title, message) {
+      document.getElementById('toast-title').textContent = title;
+      document.getElementById('toast-message').textContent = message;
+      document.getElementById('toast').classList.add('show');
+      setTimeout(() => document.getElementById('toast').classList.remove('show'), 3000);
+    }
+
+    // Mobile Menu
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const overlay = document.getElementById('mobile-menu-overlay');
+      menu.classList.toggle('active');
+      overlay.classList.toggle('hidden');
+    }
+
+    document.getElementById('mobile-menu-btn').addEventListener('click', toggleMobileMenu);
+    document.getElementById('close-mobile-menu').addEventListener('click', toggleMobileMenu);
+    document.getElementById('mobile-menu-overlay').addEventListener('click', toggleMobileMenu);
+
+    // Cart Sidebar
+    function toggleCart() {
+      const sidebar = document.getElementById('cart-sidebar');
+      const overlay = document.getElementById('cart-overlay');
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('hidden');
+    }
+
+    document.getElementById('cart-btn').addEventListener('click', toggleCart);
+    document.getElementById('close-cart').addEventListener('click', toggleCart);
+    document.getElementById('cart-overlay').addEventListener('click', toggleCart);
+
+    // Filter
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => {
+          b.classList.remove('bg-brand-green', 'text-white');
+          b.classList.add('bg-gray-100', 'dark:bg-gray-800', 'text-gray-600', 'dark:text-gray-300');
+        });
+        btn.classList.remove('bg-gray-100', 'dark:bg-gray-800', 'text-gray-600', 'dark:text-gray-300');
+        btn.classList.add('bg-brand-green', 'text-white');
+
+        const filter = btn.getAttribute('data-filter');
+        const filtered = filter === 'all' ? products : products.filter(p => p.category === filter);
+        renderProducts(filtered);
+      });
+    });
+
+    // Dark Mode
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const html = document.documentElement;
+
+    if (localStorage.getItem('darkMode') === 'true') {
+      html.classList.add('dark');
+    }
+
+    darkModeToggle.addEventListener('click', () => {
+      html.classList.toggle('dark');
+      localStorage.setItem('darkMode', html.classList.contains('dark'));
+    });
+
+    // Countdown
+    function startCountdown() {
+      const endDate = new Date();
+      endDate.setDate(endDate.getDate() + 2);
+
+      setInterval(() => {
+        const now = new Date();
+        const diff = endDate - now;
+
+        if (diff > 0) {
+          document.getElementById('days-1').textContent = String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, '0');
+          document.getElementById('hours-1').textContent = String(Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+          document.getElementById('mins-1').textContent = String(Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+          document.getElementById('secs-1').textContent = String(Math.floor((diff % (1000 * 60)) / 1000)).padStart(2, '0');
+        }
+      }, 1000);
+    }
+
+    // Newsletter
+    document.getElementById('newsletter-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      showToast('Subscribed!', 'Thank you for subscribing');
+      document.getElementById('newsletter-email').value = '';
+    });
+
+    // Back to Top
+    window.addEventListener('scroll', () => {
+      const backToTop = document.getElementById('back-to-top');
+      if (window.scrollY > 500) {
+        backToTop.classList.remove('opacity-0', 'invisible');
+      } else {
+        backToTop.classList.add('opacity-0', 'invisible');
+      }
+    });
+
+    document.getElementById('back-to-top').addEventListener('click', () => {
+      gsap.to(window, { duration: 1, scrollTo: 0, ease: "power2.inOut" });
+    });
+
+    // Smooth Scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          gsap.to(window, { duration: 1, scrollTo: target, ease: "power2.inOut" });
+          if (!document.getElementById('mobile-menu').classList.contains('active')) {
+            toggleMobileMenu();
+          }
+        }
+      });
+    });
+
+    // Magnetic Buttons
+    document.querySelectorAll('.magnetic-btn').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+
+        gsap.to(btn, {
+          x: x * 0.3,
+          y: y * 0.3,
+          duration: 0.3,
+          ease: "power2.out"
+        });
+      });
+
+      btn.addEventListener('mouseleave', () => {
+        gsap.to(btn, {
+          x: 0,
+          y: 0,
+          duration: 0.3,
+          ease: "power2.out"
+        });
+      });
+    });
+
+    // Initialize
+    renderProducts(products);
+    startCountdown();
+  </script>
+</body>
+
 </html>
